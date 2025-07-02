@@ -19,8 +19,8 @@ public class InventoryService {
 
     private static final String ITEM_CACHE = "items";
 
-    @Transactional
-    @CacheEvict(value = ITEM_CACHE, key = "#item.sku")
+
+    @CacheEvict(value = ITEM_CACHE, key = "#itemDto.sku")
     public ItemDto createOrUpdateItem(ItemDto itemDto) {
         Optional<Item> existingItem = itemRepository.findBySku(itemDto.getSku());
         Item savedItem;

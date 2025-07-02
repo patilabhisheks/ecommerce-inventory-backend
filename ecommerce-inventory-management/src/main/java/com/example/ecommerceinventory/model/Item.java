@@ -1,7 +1,10 @@
     package com.example.ecommerceinventory.model;
 
     import jakarta.persistence.*;
+    import lombok.AllArgsConstructor;
     import lombok.Builder;
+    import lombok.Data;
+    import lombok.NoArgsConstructor;
     import org.hibernate.annotations.CreationTimestamp;
     import org.hibernate.annotations.UpdateTimestamp;
 
@@ -9,6 +12,9 @@
 
     @Entity
     @Builder
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Table(name = "items")
     public class Item {
         @Id
