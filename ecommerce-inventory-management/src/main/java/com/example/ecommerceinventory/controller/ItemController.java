@@ -1,6 +1,7 @@
 package com.example.ecommerceinventory.controller;
 
 import com.example.ecommerceinventory.dto.GenericResponse;
+import com.example.ecommerceinventory.dto.ItemDto;
 import com.example.ecommerceinventory.enums.InventoryOperation;
 import com.example.ecommerceinventory.exceptions.BadRequestException;
 import com.example.ecommerceinventory.model.Item;
@@ -21,9 +22,9 @@ public class ItemController {
 
     @PostMapping("/items")
     public ResponseEntity<GenericResponse> createOrUpdateItem(
-            @RequestBody Item item) {
+            @RequestBody ItemDto itemDto) {
         try {
-            Item savedItem = inventoryService.createOrUpdateItem(item);
+            ItemDto savedItem = inventoryService.createOrUpdateItem(itemDto);
             return ResponseEntity.ok(new GenericResponse().success(
                     "Item Created Successfully", savedItem));
         } catch (BadRequestException e) {

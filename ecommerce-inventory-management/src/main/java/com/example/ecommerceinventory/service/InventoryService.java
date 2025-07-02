@@ -1,5 +1,6 @@
 package com.example.ecommerceinventory.service;
 
+import com.example.ecommerceinventory.dto.ItemDto;
 import com.example.ecommerceinventory.enums.InventoryOperation;
 import com.example.ecommerceinventory.model.Item;
 import com.example.ecommerceinventory.repository.ItemRepository;
@@ -20,19 +21,31 @@ public class InventoryService {
 
     @Transactional
     @CacheEvict(value = ITEM_CACHE, key = "#item.sku")
-    public Item createOrUpdateItem(Item item) {
-        Optional<Item> existingItem = itemRepository.findBySku(item.getSku());
+    public ItemDto createOrUpdateItem(ItemDto itemDto) {
+        Optional<Item> existingItem = itemRepository.findBySku(itemDto.getSku());
+        Item savedItem;
+
         if (existingItem.isPresent()) {
             Item dbItem = existingItem.get();
-            dbItem.setName(item.getName());
-            dbItem.setDescription(item.getDescription());
-            dbItem.setPrice(item.getPrice());
-            dbItem.setTotalQuantity(item.getTotalQuantity());
-            return itemRepository.save(dbItem);
+            dbItem.setName(itemDto.getName());
+            dbItem.setDescription(itemDto.getDescription());
+            dbItem.setPrice(itemDto.getPrice());
+            dbItem.setTotalQuantity(itemDto.getTotalQuantity());
+            savedItem = itemRepository.save(dbItem);
         } else {
-            return itemRepository.save(item);
+            Item newItem = Item.builder()
+                    .sku(itemDto.getSku())
+                    .name(itemDto.getName())
+                    .description(itemDto.getDescription())
+                    .price(itemDto.getPrice())
+                    .totalQuantity(itemDto.getTotalQuantity())
+                    .reservedQuantity(0)
+                    .build();
+            savedItem = itemRepository.save(newItem);
         }
+        return itemDto;
     }
+
 
     @Transactional
     @CacheEvict(value = ITEM_CACHE, key = "#sku")

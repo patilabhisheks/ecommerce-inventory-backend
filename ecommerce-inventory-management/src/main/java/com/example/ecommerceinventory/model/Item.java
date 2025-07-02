@@ -1,12 +1,14 @@
     package com.example.ecommerceinventory.model;
 
     import jakarta.persistence.*;
+    import lombok.Builder;
     import org.hibernate.annotations.CreationTimestamp;
     import org.hibernate.annotations.UpdateTimestamp;
 
     import java.time.LocalDateTime;
 
     @Entity
+    @Builder
     @Table(name = "items")
     public class Item {
         @Id
