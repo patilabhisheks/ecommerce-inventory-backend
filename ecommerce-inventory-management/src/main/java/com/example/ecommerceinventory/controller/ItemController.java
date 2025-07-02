@@ -4,6 +4,7 @@ import com.example.ecommerceinventory.dto.GenericResponse;
 import com.example.ecommerceinventory.dto.ItemDto;
 import com.example.ecommerceinventory.enums.InventoryOperation;
 import com.example.ecommerceinventory.exceptions.BadRequestException;
+import com.example.ecommerceinventory.exceptions.SkuNotFoundException;
 import com.example.ecommerceinventory.model.Item;
 import com.example.ecommerceinventory.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,17 +37,36 @@ public class ItemController {
     }
 
     @GetMapping("/items/{sku}")
-    public ResponseEntity<Item> getItemBySku(@PathVariable String sku) {
-        Optional<Item> item = inventoryService.getItemBySku(sku);
-        return item.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<GenericResponse> getItemBySku(@PathVariable String sku) {
+        try {
+            Optional<Item> item = inventoryService.getItemBySku(sku);
+            if (item.isEmpty()) {
+                throw new SkuNotFoundException("Item is not available for sku");
+            }
+            return ResponseEntity.ok(new GenericResponse().success(
+                    "Item from sku",item.get()));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new GenericResponse().failure(
+                            "An unexpected error occurred", e.getMessage()));
+        }
+
     }
 
     @GetMapping("/items/{sku}/availability")
-    public ResponseEntity<Integer> getAvailableQuantity(@PathVariable String sku) {
-        Optional<Integer> quantity = inventoryService.getAvailableQuantity(sku);
-        return quantity.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<GenericResponse> getAvailableQuantity(@PathVariable String sku) {
+        try {
+            Optional<Integer> quantity = inventoryService.getAvailableQuantity(sku);
+            if (quantity.isEmpty()) {
+                throw new BadRequestException("Quantity for the sku is not available");
+            }
+            return ResponseEntity.ok(new GenericResponse().success(
+                    "Available quantity", quantity));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new GenericResponse().failure(
+                        "An unexpected error occurred", e.getMessage()));
+        }
     }
 
     @PostMapping("/items/{sku}/reserve")

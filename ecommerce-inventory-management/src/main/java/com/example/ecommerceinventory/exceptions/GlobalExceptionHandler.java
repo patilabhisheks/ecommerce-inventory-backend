@@ -8,7 +8,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<String> handleUserAlreadyExistException(
+    public ResponseEntity<String> handleBadRequestException(
+            BadRequestException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SkuNotFoundException.class)
+    public ResponseEntity<String> handleSkuNotFoundException(
             BadRequestException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
